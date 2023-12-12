@@ -1,0 +1,12 @@
+button {
+    cursor: pointer;
+}
+table {
+    height: 400px;
+    width: 800px;
+}
+.image-pre {
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+}

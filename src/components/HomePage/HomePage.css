@@ -1,0 +1,47 @@
+body {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    font-family: 'Times New Roman', Times, serif;
+    user-select: none;
+}
+#root {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 600px;
+}
+.home-page {
+    width: 70%;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1.5px solid black;
+    border-radius: 20px;
+}
+.home-page h4 {
+    font-size: 30px;
+}
+.home-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 5vh;
+}
+.home-btn .button {
+    cursor: pointer;
+    height: 70px;
+    width: 250px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 20px;
+    border: 1px solid black;
+}
+a {
+    text-decoration: none;
+}
