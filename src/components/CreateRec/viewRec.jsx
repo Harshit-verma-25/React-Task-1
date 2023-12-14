@@ -66,7 +66,7 @@ function ViewRec ( { id, getRecordId } ) {
                                 <td>{item.contact}</td>
                                 <td><img className="image-pre" src={item.img} alt="" /></td>
                                 <td>
-                                    <Link to={`${item.resume}`}>
+                                    <Link to={`${item.resume}`} target="_blank">
                                         <button>View</button>
                                     </Link>
                                 </td>

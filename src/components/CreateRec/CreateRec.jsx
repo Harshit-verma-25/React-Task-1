@@ -152,14 +152,14 @@ function CreateRec( { id, setRecordId } ) {
             setAddInputField([])
         }
         else {
-            if (image === '') {
+            if (image == '') {
                 const [resURL] = await loadLink()
                 console.log(resURL)
                 let data = { ...formData, qualificaion: addInputField, resume: resURL }
                 console.log(data)
                 setFormData(data)
             }
-            else if (resume === '') {
+            else if (resume == '') {
                 const [imgURL] = await loadLink()
                 console.log(imgURL)
                 let data = { ...formData, qualificaion: addInputField, img: imgURL }
