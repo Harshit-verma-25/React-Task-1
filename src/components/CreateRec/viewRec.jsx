@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react"
 import { doc, getDocs, deleteDoc } from "firebase/firestore"
-import { ref, deleteObject, listAll } from 'firebase/storage'
+import { ref, deleteObject, listAll, list } from 'firebase/storage'
 import { recordCollection, storage } from "../Firebase/firebase"
 import { Link } from "react-router-dom"
 import './viewRec.css'
 
 function ViewRec ( { id, getRecordId } ) {
     const [viewData, setViewData] = React.useState([])
-    const [imageName, setImageName] = React.useState('')
-    const [resumeName, setResumeName] = React.useState('')
 
     React.useEffect(() => {
         readData();
@@ -29,42 +27,10 @@ function ViewRec ( { id, getRecordId } ) {
 
         console.log(id)
         
-        // console.log(imgURL)
-        // console.log(resURL)
-        
-        const imageRef = ref(storage, `images`)
-        const resumeRef = ref(storage, `resumes`)
-
-        console.log(imageRef)
-        console.log(resumeRef)
-        
-        await listAll(imageRef).then((res) => {
-            res.items.forEach((itemRef) => {
-                console.log(itemRef.name)
-                setImageName(itemRef.name)
-            })
-        })
-        .catch((error) => {
-            console.log(error)
-        })
-        console.log(imageName)
-        
-        await listAll(resumeRef).then((res) => {
-            res.items.forEach((itemRef) => {
-                setResumeName(itemRef.name)
-            });
-        })
-        .catch((error) => {
-            console.log(error)
-        })
-        
-        // console.log(viewData)
-        
-        const deleteImgRef = ref(storage, `images/${id}/${imageName}`)
-        // console.log(deleteImgRef)
+        const deleteImgRef = ref(storage, `images/${id}`)
         await deleteObject(deleteImgRef)
         
-        const deleteResRef = ref(storage, `resumes/${id}/${resumeName}`)
+        const deleteResRef = ref(storage, `resumes/${id}`)
         await deleteObject(deleteResRef)
         console.log("Data Deleted")
         
@@ -73,7 +39,7 @@ function ViewRec ( { id, getRecordId } ) {
         
         readData()
     }
-    
+
     return (
         <>
             <h1>View Record</h1>

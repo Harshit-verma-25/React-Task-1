@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { doc, setDoc, addDoc, getDocs } from 'firebase/firestore'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { db, recordCollection, storage } from '../Firebase/firebase'
+import { nanoid } from 'nanoid'
 import './CreateRec.css'
 
 function CreateRec( { id, setRecordId } ) {
@@ -9,13 +10,15 @@ function CreateRec( { id, setRecordId } ) {
     const [image, setImage] = React.useState('')
     const [resume, setResume] = React.useState('')
     const [addInputField, setAddInputField] = React.useState([])
+    const [disable, setDisable] = React.useState(false)
     const [formData, setFormData] = React.useState({
-        userID: '',
+        userID: nanoid(),
         name: '',
         img: '',
         address: '',
         contact: '',
         email: '',
+        qualificaion: [],
         dob: '',
         resume: ''
     })
@@ -23,12 +26,9 @@ function CreateRec( { id, setRecordId } ) {
     async function loadLink () {
 
         try {    
-            let imgRef = ref(storage, `images/${image.name}`)
+            let imgRef = ref(storage, `images/${formData.userID}`)
 
-            let resumeRef = ref(storage, `resumes/${resume.name}`)
-        
-            // console.log(imgRef)
-            // console.log(resumeRef)
+            let resumeRef = ref(storage, `resumes/${formData.userID}`)
 
             await uploadBytes(imgRef, image)
             const imgURL = await getDownloadURL(imgRef)
@@ -44,16 +44,14 @@ function CreateRec( { id, setRecordId } ) {
     }
 
     
-    async function createNewRecord () {   
-        const newRecordRef = await addDoc(recordCollection, { ...formData})
+    async function createNewRecord () {
         
         const [imgURL, resURL] = await loadLink()
-        let data = { ...formData, userID: newRecordRef.id, qualificaion: addInputField, img: imgURL, resume: resURL }
-        setFormData(data) 
+        let data = { ...formData, qualificaion: addInputField, img: imgURL, resume: resURL }
+        setFormData(data)
+        setDisable(true)
 
-        let docRef = doc(db, 'record', newRecordRef.id)
-        
-        await setDoc(docRef, data).then(() => console.log(data))
+        await setDoc(doc(db, 'record', formData.userID), data)
         
         alert("Record Successfully Added")
         setFormData({
@@ -61,8 +59,9 @@ function CreateRec( { id, setRecordId } ) {
             name: '',
             img: '',
             address: '',
-            contact: 0,
+            contact: '',
             email: '',
+            qualificaion: [],
             dob: '',
             resume: ''
         })
@@ -84,24 +83,24 @@ function CreateRec( { id, setRecordId } ) {
     }
     
     function handleImageChange (event) {
-        let file = event.target.files[0]
-        setImage(file)
+        setImage(event.target.files[0])
     }
     
     function handleResumeChange (event) {
-        let file = event.target.files[0]
-        setResume(file)
+        setResume(event.target.files[0])
     }
     
     function handleAdd () {
-        const empty = [...addInputField, []]
+        const empty = [...addInputField, ""]
         setAddInputField(empty)
     }
+
     function handleChange (onChangeValue, i) {
         const inputData = [...addInputField]
         inputData[i] = onChangeValue.target.value
         setAddInputField(inputData)
     }
+
     function handleDelete (i) {
         const deleteInput = [...addInputField]
         deleteInput.splice(i,1)
@@ -115,8 +114,7 @@ function CreateRec( { id, setRecordId } ) {
                 if (doc.id === id){
                     const docData = doc.data()
                     setFormData(docData)
-                    setImage(formData.img)
-                    setResume(formData.resume)
+                    setAddInputField(docData.qualificaion)
                 }
             })
         }
@@ -125,30 +123,79 @@ function CreateRec( { id, setRecordId } ) {
         }
     }
 
+    // console.log(addInputField)
+    // console.log(image)
+    // console.log(resume)
+
     async function saveEdit () {
-        let docRef = doc(db, 'record', id)
-        const [imgURL, resURL] = await loadLink()
-
-        let data = { ...formData, qualificaion: addInputField, img: imgURL, resume: resURL }
-        setFormData(data)
-
-        await setDoc(docRef, formData)
         
-        alert("Record Successfully Updated")
+        if (image === '' && resume === '') {
+            let docRef = doc(db, 'record', id)    
+            let data = { ...formData, qualificaion: addInputField}
+            setFormData(data)
+    
+            await setDoc(docRef, formData)
+            
+            alert("Record Successfully Updated")
+    
+            setFormData({
+                userID: '',
+                name: '',
+                img: '',
+                address: '',
+                contact: '',
+                email: '',
+                qualificaion: [],
+                dob: '',
+                resume: ''
+            })
+            setAddInputField([])
+        }
+        else {
+            if (image === '') {
+                const [resURL] = await loadLink()
+                console.log(resURL)
+                let data = { ...formData, qualificaion: addInputField, resume: resURL }
+                console.log(data)
+                setFormData(data)
+            }
+            else if (resume === '') {
+                const [imgURL] = await loadLink()
+                console.log(imgURL)
+                let data = { ...formData, qualificaion: addInputField, img: imgURL }
+                console.log(data)
+                setFormData(data)
+            }
+            else {
+                const [imgURL, resURL] = await loadLink()
+                console.log(imgURL, "\n", resURL)
+                let data = { ...formData, qualificaion: addInputField, img: imgURL, resume: resURL }
+                console.log(data)
+                setFormData(data)
+            }       
 
-        setFormData({
-            userID: '',
-            name: '',
-            img: '',
-            address: '',
-            contact: 0,
-            email: '',
-            dob: '',
-            resume: ''
-        })
-        setAddInputField([])
-        setImage('')
-        setResume('')
+
+            console.log(formData)
+            let docRef = doc(db, 'record', id)
+            await setDoc(docRef, formData)
+            
+            alert("Record Successfully Updated")
+    
+            setFormData({
+                userID: '',
+                name: '',
+                img: '',
+                address: '',
+                contact: '',
+                email: '',
+                qualificaion: [],
+                dob: '',
+                resume: ''
+            })
+            setAddInputField([])
+            setImage('')
+            setResume('')
+        }
     }
 
     React.useEffect(() => {
@@ -178,7 +225,7 @@ function CreateRec( { id, setRecordId } ) {
                         value={formData.dob} onChange={handleInput} autoComplete='true' required/>
                     </div>
                     <div className='profile' onClick={handleImageClick}>
-                        {image ? ( <img className='image-preview' src={URL.createObjectURL(image)} alt=""/> ) : ( <img src="/image-upload.png" alt=""/>) }
+                        <img className='image-preview' src={image != '' ? URL.createObjectURL(image) : '/image-upload.png' } alt="" />
                         
                         <input type="file" className='input' 
                         ref={imageRef} onChange={handleImageChange} required style={{display: "none"}}/>
@@ -203,7 +250,7 @@ function CreateRec( { id, setRecordId } ) {
                 Resume (PDF only): <input type="file" className='input' onChange={handleResumeChange} />
                 <input type="file" name="resume" className='input' onChange={handleInput} style={{display: 'none'}} />
                 <div className='form-button'>
-                    <button type="submit" className='button' onClick={createNewRecord}>SAVE</button>
+                    <button type="submit" className='button' onClick={createNewRecord} disabled={disable}>SAVE</button>
                     <a href={'/'}><button className='button'>BACK</button></a>
                 </div>  
             </div>
@@ -230,7 +277,7 @@ function CreateRec( { id, setRecordId } ) {
                         value={formData.dob} onChange={handleInput} autoComplete='true' required/>
                     </div>
                     <div className='profile' onClick={handleImageClick}>
-                        {image ? ( <img className='image-preview' src={URL.createObjectURL(image)} alt=""/>) : ( <img className='image-preview' src={formData.img} alt=""/> ) }
+                        <img className='image-preview' src={image == '' ? formData.img : URL.createObjectURL(image)} alt="" />
                         
                         <input type="file" className='input' 
                         ref={imageRef} onChange={handleImageChange} required style={{display: "none"}}/>
@@ -245,10 +292,10 @@ function CreateRec( { id, setRecordId } ) {
                     </div>
                     {addInputField.map((data, i) => {
                         return (
-                                <div className='add-input' key={i}>    
-                                    <input type='text' value={data} placeholder='Enter your Qualification' onChange={e => handleChange(e,i)} />
-                                    <button onClick={() => handleDelete(i)}>-</button>
-                                </div>
+                            <div className='add-input' key={i}>    
+                                <input type='text' value={data} placeholder='Enter your Qualification' onChange={e => handleChange(e,i)} />
+                                <button onClick={() => handleDelete(i)}>-</button>
+                            </div>
                         )
                     })}
                 </div>
