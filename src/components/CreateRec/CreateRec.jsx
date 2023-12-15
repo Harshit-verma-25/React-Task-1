@@ -154,10 +154,10 @@ function CreateRec({ id, setRecordId }) {
 
         if (editMode && hasChanges) {
 
-            setFormData(userToUpdate)
-            console.log(formData)
+            // setFormData(userToUpdate)
+            // console.log(formData)
             let docRef = doc(db, 'record', id)
-            await setDoc(docRef, formData)
+            await setDoc(docRef, userToUpdate)
 
             alert("Record Successfully Updated")
 
