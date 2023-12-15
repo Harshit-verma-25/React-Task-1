@@ -258,7 +258,7 @@ function CreateRec({ id, setRecordId }) {
                             value={formData.dob} onChange={handleInput} autoComplete='true' required />
                     </div>
                     <div className='profile' onClick={handleImageClick}>
-                        <img className='image-preview' src={image == '' ? formData.img : URL.createObjectURL(image)} alt="" />
+                        <img className='image-preview' src={image == '' ? formData.img : URL.createObjectURL(image)} alt=""/>
 
                         <input type="file" className='input'
                             ref={imageRef} onChange={handleImageChange} required style={{ display: "none" }} />
@@ -280,7 +280,7 @@ function CreateRec({ id, setRecordId }) {
                         )
                     })}
                 </div>
-                Resume (PDF only): <input type="file" name="resume" className='input' onChange={handleResumeChange} />
+                Resume (PDF only): <input type="file" name="resume" className='input' onChange={handleResumeChange}/>
                 <div className='form-button'>
                     <button type="submit" className='button' onClick={saveEdit}>EDIT</button>
                     <a href={'/view-record'}><button className='button'>CANCEL</button></a>
