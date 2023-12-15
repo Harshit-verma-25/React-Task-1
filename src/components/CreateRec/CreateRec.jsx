@@ -3,6 +3,7 @@ import { doc, setDoc, addDoc, getDocs } from 'firebase/firestore'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { db, recordCollection, storage } from '../Firebase/firebase'
 import { nanoid } from 'nanoid'
+import { Link } from 'react-router-dom'
 import './CreateRec.css'
 
 function CreateRec({ id, setRecordId }) {
@@ -148,14 +149,11 @@ function CreateRec({ id, setRecordId }) {
             qualificaion: addInputField
         }
 
-        console.log(userToUpdate)
         const hasChanges = JSON.stringify(formData) !== JSON.stringify(userToUpdate)
         console.log(hasChanges)
 
         if (editMode && hasChanges) {
 
-            // setFormData(userToUpdate)
-            // console.log(formData)
             let docRef = doc(db, 'record', id)
             await setDoc(docRef, userToUpdate)
 
@@ -281,6 +279,9 @@ function CreateRec({ id, setRecordId }) {
                     })}
                 </div>
                 Resume (PDF only): <input type="file" name="resume" className='input' onChange={handleResumeChange}/>
+                <Link to={`${formData.resume}`} target="_blank">
+                    <button>View</button>
+                </Link>
                 <div className='form-button'>
                     <button type="submit" className='button' onClick={saveEdit}>EDIT</button>
                     <a href={'/view-record'}><button className='button'>CANCEL</button></a>
