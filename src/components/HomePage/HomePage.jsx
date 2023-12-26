@@ -1,12 +1,30 @@
-// import React from "react"
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { recordCollection } from '../Firebase/firebase'
 import './HomePage.css'
+import { getCountFromServer } from 'firebase/firestore'
 
 export default function HomePage() {
+
+    const [totalRecords, setTotalRecords] = useState(0)
+    
+    React.useEffect(() => {
+        const fetchTotalRecords = async () => {
+            try {
+                const snapshot = await getCountFromServer(recordCollection)
+                const countCollections = snapshot.data().count
+                setTotalRecords(countCollections)
+            } catch (error) {
+                console.log("error is : ", error)
+            }
+        }
+        fetchTotalRecords(); // Call the async function inside useEffect
+    }, []);
+
     return (
         <div className="home-page">
             <div className="record-number">
-                <h4>Number of Records are: </h4>
+                <h4>Number of Records are: {totalRecords}</h4>
             </div>
             <div className="home-btn">
                 <Link to={'/create-record'}>
