@@ -196,7 +196,7 @@ function Edit ({id, setRecordId}) {
                 <button>View</button>
             </Link>
             <div className='form-button'>
-                <button type="submit" className='button' onClick={saveEdit}>EDIT</button>
+                <Link to={'/view-record'}><button type="submit" className='button' onClick={saveEdit}>EDIT</button></Link>
                 <Link to={'/view-record'}><button className='button'>CANCEL</button></Link>
             </div>
         </div>
