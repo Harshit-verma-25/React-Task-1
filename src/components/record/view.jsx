@@ -35,7 +35,7 @@ function View({ id, getRecordId }) {
 
         const deleteResRef = ref(storage, `resumes/${id}`)
         await deleteObject(deleteResRef)
-        console.log("Data Deleted")
+        alert("Data Deleted")
 
         setViewData((prevData) => prevData.filter((data) => data.userID !== id))
         await deleteDoc(doc(recordCollection, id))
@@ -74,7 +74,7 @@ function View({ id, getRecordId }) {
                                     </Link>
                                 </td>
                                 <td>
-                                    <Link to={'/create-record'}><button className="btn" style={{marginRight:'0.2vw'}} onClick={(e) => getRecordId(item.userID)}>Edit</button></Link>
+                                    <Link to={'/edit-record'}><button className="btn" style={{marginRight:'0.2vw'}} onClick={(e) => getRecordId(item.userID)}>Edit</button></Link>
                                     <button onClick={() => handleDelete(item.id, item.img, item.resume)} className="btn" >Delete</button>
                                 </td>
                             </tr>

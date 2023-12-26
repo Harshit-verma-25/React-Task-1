@@ -3,16 +3,16 @@ import { doc, setDoc, addDoc, getDocs } from 'firebase/firestore'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { db, recordCollection, storage } from '../Firebase/firebase'
 import { nanoid } from 'nanoid'
+import { Link } from 'react-router-dom'
 import './Create.css'
 
-function Create() {
+function Edit ({id, setRecordId}) {
 
-    const [maxDate, setMaxDate] = useState(new Date())
     const imageRef = useRef(null)
     const [image, setImage] = React.useState('')
     const [resume, setResume] = React.useState('')
     const [addInputField, setAddInputField] = React.useState([])
-    const [disable, setDisable] = React.useState(false)
+    const [editMode, SeteditMode] = React.useState(false)
     const [formData, setFormData] = React.useState({
         userID: nanoid(),
         name: '',
@@ -26,52 +26,32 @@ function Create() {
     })
 
     async function loadLink() {
-        const imageRef = ref(storage, `images/${formData.userID}`)
-        await uploadBytes(imageRef, image);
-        let imgURL = await getDownloadURL(imageRef)
-            
-        const resumeref = ref(storage, `resumes/${formData.userID}`)
-        await uploadBytes(resumeref, resume);
-        let resURL = await getDownloadURL(resumeref);
 
-        return [ imgURL, resURL ]
-    }
+        try {
+            let imgURL, resURL
+            if (image) {
+                const imageRef = ref(storage, `images/${formData.userID}`)
+                await uploadBytes(imageRef, image);
+                imgURL = await getDownloadURL(imageRef);
+            } 
+            else {
+                imgURL = formData.img;
+            }
 
+            if (resume) {
+                const resumeref = ref(storage, `resumes/${formData.userID}`)
+                await uploadBytes(resumeref, resume);
+                resURL = await getDownloadURL(resumeref);
+            } 
+            else {
+                resURL = formData.resume;
+            }
 
-    async function createNewRecord() {
-
-        let [imgURL, resURL] = await loadLink()
-        let data = { ...formData, qualificaion: addInputField, img: imgURL, resume: resURL }
-        setFormData(data)
-        setDisable(true)
-
-        await setDoc(doc(db, 'record', formData.userID), data)
-
-        alert("Record Successfully Added")
-        setFormData({
-            userID: '',
-            name: '',
-            img: '',
-            address: '',
-            contact: '',
-            email: '',
-            qualificaion: [],
-            dob: '',
-            resume: ''
-        })
-        setAddInputField([])
-        setImage('')
-        setResume('')
-    }
-
-    const handleInput = (e) => {
-        let name, value;
-        name = e.target.name;
-        value = e.target.value;
-        setFormData({
-            ...formData,
-            [name]: value
-        })
+            return [ imgURL, resURL ]
+        }
+        catch (error) {
+            alert('Error uploading files:', error)
+        }
     }
 
     function handleImageClick(event) {
@@ -103,6 +83,72 @@ function Create() {
         setAddInputField(deleteInput)
     }
 
+    const handleInput = (e) => {
+        let name, value;
+        if (e.target.name && e.target.value) {
+            name = e.target.name;
+            value = e.target.value;
+            setFormData({
+                ...formData,
+                [name]: value
+            })
+        }
+    }
+
+    async function saveEdit() {
+
+        let [imgURL, resURL] = await loadLink()
+        const userToUpdate = {
+            ...formData,
+            img: imgURL,
+            resume: resURL,
+            qualificaion: addInputField
+        }
+
+        if (editMode) {
+            let docRef = doc(db, 'record', id)
+            await setDoc(docRef, userToUpdate)
+
+            alert("Record Successfully Updated")
+
+            setFormData({
+                userID: '',
+                name: '',
+                img: '',
+                address: '',
+                contact: '',
+                email: '',
+                qualificaion: [],
+                dob: '',
+                resume: ''
+            })
+            setAddInputField([])
+        }
+    }
+
+    async function editHandler() {
+        try {
+            const docSnap = await getDocs(recordCollection, id)
+            SeteditMode(!editMode);
+            docSnap.forEach((doc) => {
+                if (doc.id === id) {
+                    const docData = doc.data()
+                    setFormData(docData)
+                    setAddInputField(docData.qualificaion)
+                }
+            })
+        }
+        catch (err) {
+            alert("Kuch toh GadBad hai daya !!")
+        }
+    }
+
+    React.useEffect(() => {
+        if (id !== undefined && id !== "") {
+            editHandler()
+        }
+    }, [id])
+
     return (
         <div className='form'>
             <div className='form-container'>
@@ -113,17 +159,17 @@ function Create() {
                     Address: <input type="text" name='address' className="input" placeholder="Enter your Address"
                         value={formData.address} onChange={handleInput} autoComplete='true' required />
 
-                    Contact: <input type="text" name='contact' className="input" placeholder="Enter your Contact"
+                    Contact: <input type="text" name='contact' className="input" placeholder="0"
                         value={formData.contact} onChange={(e) => handleInput(e, true)} autoComplete='true' required />
 
                     Email: <input type="text" name='email' className="input" placeholder="Enter your Email"
                         value={formData.email} onChange={handleInput} autoComplete='true' required />
 
                     DOB: <input type="date" name='dob' className="input" placeholder="Enter your DOB"
-                        value={formData.dob} onChange={handleInput} autoComplete='true' max={`${maxDate.getUTCFullYear()}-${maxDate.getMonth()+1}-${maxDate.getDate()}`} required />
+                        value={formData.dob} onChange={handleInput} autoComplete='true' required />
                 </div>
                 <div className='profile' onClick={handleImageClick}>
-                    <img className='image-preview' src={image != '' ? URL.createObjectURL(image) : '/image-upload.png'} alt="" />
+                    <img className='image-preview' src={image == '' ? formData.img : URL.createObjectURL(image)} alt=""/>
 
                     <input type="file" className='input'
                         ref={imageRef} onChange={handleImageChange} required style={{ display: "none" }} />
@@ -145,14 +191,16 @@ function Create() {
                     )
                 })}
             </div>
-            Resume (PDF only): <input type="file" className='input' onChange={handleResumeChange} />
-            <input type="file" name="resume" className='input' onChange={handleInput} style={{ display: 'none' }} />
+            Resume (PDF only): <input type="file" name="resume" className='input' onChange={handleResumeChange}/>
+            <Link to={`${formData.resume}`} target="_blank">
+                <button>View</button>
+            </Link>
             <div className='form-button'>
-                <button type="submit" className='button' onClick={createNewRecord} disabled={disable}>SAVE</button>
-                <a href={'/'}><button className='button'>BACK</button></a>
+                <button type="submit" className='button' onClick={saveEdit}>EDIT</button>
+                <Link to={'/view-record'}><button className='button'>CANCEL</button></Link>
             </div>
         </div>
     )
 }
 
-export default Create
+export default Edit
