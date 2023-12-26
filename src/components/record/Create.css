@@ -10,6 +10,8 @@ body {
     user-select: none;
 }
 .form {
+    /* background-image: radial-gradient( circle farthest-corner at 20% 10%,  rgba(176,229,208,1) 42%, rgba(92,202,238,0.41) 93.6% ); */
+    background: linear-gradient(to left, rgba(176,229,208,1), rgba(92,202,238,0.41));
     height: 100%;
     width: 100%;
     padding: 20px;
@@ -89,8 +91,15 @@ input {
     font-size: 15px;
     font-weight: 600;
     border-radius: 20px;
-    border: 1px solid black;
+    border: 1px solid white;
 }
-a {
-    text-decoration: none;
+
+.button:hover {
+    /* background-color: seagreen; */
+    background: linear-gradient(to right, rgba(176, 229, 208, 1), rgba(92, 202, 238, 0.41));
+    color: #fff;
 }
+
+.button:active {
+    background-color: #3e8e41;
+} 

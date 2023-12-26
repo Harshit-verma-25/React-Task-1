@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import HomePage from "./components/HomePage/HomePage"
-import CreateRec from "./components/CreateRec/CreateRec"
-import ViewRec from "./components/CreateRec/viewRec"
+import Create from "./components/record/Create"
+import View from "./components/record/view"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
 function App() {
@@ -20,11 +20,11 @@ function App() {
     },
     {
         path: "/create-record",
-        element: <CreateRec id={recordId} setRecordId={setRecordId} />
+        element: <Create id={recordId} setRecordId={setRecordId} />
     },
     {
         path: "/view-record",
-        element: <ViewRec id={recordId} getRecordId = {getRecordIdHandler}/>
+        element: <View id={recordId} getRecordId = {getRecordIdHandler}/>
     }
     ])
     return (

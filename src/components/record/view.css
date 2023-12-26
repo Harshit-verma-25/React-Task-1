@@ -1,0 +1,48 @@
+h1 {
+    text-align: center;
+    color: #fff;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background-color: #4CAF50;
+    color: white;
+}
+
+th, td {
+    text-align: center;
+    border: 1px solid #ddd;
+    padding: 0.5vw;
+    text-align: left;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.image-pre {
+    max-width: 10vw;
+    max-height: 12vh;
+    object-fit: cover;
+}
+
+.btn {
+    padding: 0.5vw;
+    cursor: pointer;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 20px;
+}
+
+.btn:hover {
+    background-color: #45a049;
+}
+
+.btn:active {
+    background-color: #3e8e41;
+}  

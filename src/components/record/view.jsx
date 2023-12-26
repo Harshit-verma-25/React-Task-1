@@ -3,9 +3,9 @@ import { doc, getDocs, deleteDoc } from "firebase/firestore"
 import { ref, deleteObject, listAll, list } from 'firebase/storage'
 import { recordCollection, storage } from "../Firebase/firebase"
 import { Link } from "react-router-dom"
-import './viewRec.css'
+import './view.css'
 
-function ViewRec({ id, getRecordId }) {
+function View({ id, getRecordId }) {
     const [viewData, setViewData] = React.useState([])
 
     React.useEffect(() => {
@@ -70,21 +70,22 @@ function ViewRec({ id, getRecordId }) {
                                 <td><img className="image-pre" src={item.img} alt="" /></td>
                                 <td>
                                     <Link to={`${item.resume}`} target="_blank">
-                                        <button>View</button>
+                                        <button className="btn">View</button>
                                     </Link>
                                 </td>
                                 <td>
-                                    <Link to={'/create-record'}><button onClick={(e) => getRecordId(item.userID)}>Edit</button></Link>
-                                    <button onClick={() => handleDelete(item.id, item.img, item.resume)}>Delete</button>
+                                    <Link to={'/create-record'}><button className="btn" style={{marginRight:'0.2vw'}} onClick={(e) => getRecordId(item.userID)}>Edit</button></Link>
+                                    <button onClick={() => handleDelete(item.id, item.img, item.resume)} className="btn" >Delete</button>
                                 </td>
                             </tr>
                         ))
                     }
                 </tbody>
             </table>
-            <Link to={'/'}><button>Back</button></Link>
+            <br />
+            <Link to={'/'}><button style={{width:'10vw', height:'6vh', fontSize:'1vw'}} className="btn" >Back</button></Link>
         </>
     )
 }
 
-export default ViewRec
+export default View

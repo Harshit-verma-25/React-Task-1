@@ -4,9 +4,11 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { db, recordCollection, storage } from '../Firebase/firebase'
 import { nanoid } from 'nanoid'
 import { Link } from 'react-router-dom'
-import './CreateRec.css'
+import './Create.css'
 
-function CreateRec({ id, setRecordId }) {
+function Create({ id, setRecordId }) {
+
+    const [maxDate, setMaxDate] = useState(new Date())
     const imageRef = useRef(null)
     const [image, setImage] = React.useState('')
     const [resume, setResume] = React.useState('')
@@ -201,7 +203,7 @@ function CreateRec({ id, setRecordId }) {
                             value={formData.email} onChange={handleInput} autoComplete='true' required />
 
                         DOB: <input type="date" name='dob' className="input" placeholder="Enter your DOB"
-                            value={formData.dob} onChange={handleInput} autoComplete='true' required />
+                            value={formData.dob} onChange={handleInput} autoComplete='true' max={`${maxDate.getUTCFullYear()}-${maxDate.getMonth()+1}-${maxDate.getDate()}`} required />
                     </div>
                     <div className='profile' onClick={handleImageClick}>
                         <img className='image-preview' src={image != '' ? URL.createObjectURL(image) : '/image-upload.png'} alt="" />
@@ -291,4 +293,4 @@ function CreateRec({ id, setRecordId }) {
     }
 }
 
-export default CreateRec
+export default Create
