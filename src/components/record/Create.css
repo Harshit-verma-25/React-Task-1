@@ -48,6 +48,7 @@ input {
     cursor: pointer;
 }
 .image-preview {
+    border-radius: 20px;
     height: inherit;
     width: inherit;
 }
@@ -91,13 +92,13 @@ input {
     font-size: 15px;
     font-weight: 600;
     border-radius: 20px;
-    border: 1px solid white;
+    border: 2px solid white;
 }
 
 .button:hover {
     /* background-color: seagreen; */
     background: linear-gradient(to right, rgba(176, 229, 208, 1), rgba(92, 202, 238, 0.41));
-    color: #fff;
+    color: black;
 }
 
 .button:active {

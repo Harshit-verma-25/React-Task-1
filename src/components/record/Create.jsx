@@ -126,7 +126,7 @@ function Create() {
                     <img className='image-preview' src={image != '' ? URL.createObjectURL(image) : '/image-upload.png'} alt="" />
 
                     <input type="file" className='input'
-                        ref={imageRef} onChange={handleImageChange} required style={{ display: "none" }} />
+                        ref={imageRef} onChange={handleImageChange} accept='.jpg, .jpeg' required style={{ display: "none" }} />
 
                     <input type="file" name="img" className='input' onChange={handleInput} required
                         style={{ display: 'none' }} />
@@ -145,8 +145,7 @@ function Create() {
                     )
                 })}
             </div>
-            Resume (PDF only): <input type="file" className='input' onChange={handleResumeChange} />
-            <input type="file" name="resume" className='input' onChange={handleInput} style={{ display: 'none' }} />
+            Resume (PDF only): <input type="file" className='input' accept='.pdf' onChange={handleResumeChange} />
             <div className='form-button'>
                 <button type="submit" className='button' onClick={createNewRecord} disabled={disable}>SAVE</button>
                 <a href={'/'}><button className='button'>BACK</button></a>
