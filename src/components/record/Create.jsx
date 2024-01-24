@@ -7,7 +7,7 @@ import './Create.css'
 
 function Create() {
 
-    const [maxDate, setMaxDate] = useState(new Date())
+    const maxDate = new Date() 
     const imageRef = useRef(null)
     const [image, setImage] = React.useState('')
     const [resume, setResume] = React.useState('')
@@ -68,6 +68,17 @@ function Create() {
         let name, value;
         name = e.target.name;
         value = e.target.value;
+
+        if (name === "dob") {
+            const currentDate = new Date();
+            const selectedDate = new Date(value);
+      
+            if (selectedDate >= currentDate) {
+                alert("DOB should be less than today's date");
+                return;
+            }
+        }
+
         setFormData({
             ...formData,
             [name]: value
@@ -120,7 +131,7 @@ function Create() {
                         value={formData.email} onChange={handleInput} autoComplete='true' required />
 
                     DOB: <input type="date" name='dob' className="input" placeholder="Enter your DOB"
-                        value={formData.dob} onChange={handleInput} autoComplete='true' max={`${maxDate.getUTCFullYear()}-${maxDate.getMonth()+1}-${maxDate.getDate()}`} required />
+                        value={formData.dob} onChange={handleInput} autoComplete='true' required />
                 </div>
                 <div className='profile' onClick={handleImageClick}>
                     <img className='image-preview' src={image != '' ? URL.createObjectURL(image) : '/image-upload.png'} alt="" />
